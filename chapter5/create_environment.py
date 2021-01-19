@@ -1,17 +1,11 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
-"""
-Created on Fri May 10 10:44:23 2019
-
-@author: tawehbeysolow
-"""
-
 import cv2, gym, numpy as np
 from retro_contest.local import make
 from retro import make as make_retro
 from baselines.common.atari_wrappers import FrameStack
 
+
 cv2.ocl.setUseOpenCL(False)
+
 
 class PreprocessFrame(gym.ObservationWrapper):
     """
@@ -19,14 +13,14 @@ class PreprocessFrame(gym.ObservationWrapper):
     - Set frame to gray
     - Resize the frame to 96x96x1
     """
+
     def __init__(self, environment, width, height):
         gym.ObservationWrapper.__init__(self, environment)
         self.width = width
         self.height = height
-        self.observation_space = gym.spaces.Box(low=0, 
-                                                high=255,
-                                                shape=(self.height, self.width, 1), 
-                                                dtype=np.uint8)
+        self.observation_space = gym.spaces.Box(
+            low=0, high=255, shape=(self.height, self.width, 1), dtype=np.uint8
+        )
 
     def observation(self, image):
         image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
@@ -40,11 +34,19 @@ class ActionsDiscretizer(gym.ActionWrapper):
     Wrap a gym-retro environment and make it use discrete
     actions for the Sonic game.
     """
+
     def __init__(self, env):
         super(ActionsDiscretizer, self).__init__(env)
         buttons = ["B", "A", "MODE", "START", "UP", "DOWN", "LEFT", "RIGHT", "C", "Y", "X", "Z"]
-        actions = [['LEFT'], ['RIGHT'], ['LEFT', 'DOWN'], ['RIGHT', 'DOWN'], ['DOWN'],
-                   ['DOWN', 'B'], ['B']]
+        actions = [
+            ["LEFT"],
+            ["RIGHT"],
+            ["LEFT", "DOWN"],
+            ["RIGHT", "DOWN"],
+            ["DOWN"],
+            ["DOWN", "B"],
+            ["B"],
+        ]
         self._actions = []
 
         """
@@ -63,8 +65,9 @@ class ActionsDiscretizer(gym.ActionWrapper):
             self._actions.append(_actions)
         self.action_space = gym.spaces.Discrete(len(self._actions))
 
-    def action(self, a): 
+    def action(self, a):
         return self._actions[a].copy()
+
 
 class RewardScaler(gym.RewardWrapper):
     """
@@ -72,9 +75,11 @@ class RewardScaler(gym.RewardWrapper):
     This is incredibly important and effects performance
     drastically.
     """
+
     def reward(self, reward):
 
         return reward * 0.01
+
 
 class AllowBacktracking(gym.Wrapper):
     """
@@ -83,6 +88,7 @@ class AllowBacktracking(gym.Wrapper):
     from exploring backwards if there is no way to advance
     head-on in the level.
     """
+
     def __init__(self, environment):
         super(AllowBacktracking, self).__init__(environment)
         self.curent_reward = 0
@@ -100,6 +106,7 @@ class AllowBacktracking(gym.Wrapper):
         self.max_reward = max(self.max_reward, self.current_reward)
         return observation, reward, done, info
 
+
 def wrap_environment(environment, n_frames=4):
     environment = ActionsDiscretizer(environment)
     environment = RewardScaler(environment)
@@ -108,36 +115,39 @@ def wrap_environment(environment, n_frames=4):
     environment = AllowBacktracking(environment)
     return environment
 
+
 def create_new_environment(environment_index, n_frames=4):
     """
     Create an environment with some standard wrappers.
     """
 
     dictionary = [
-        {'game': 'SonicTheHedgehog-Genesis', 'state': 'SpringYardZone.Act3'},
-        {'game': 'SonicTheHedgehog-Genesis', 'state': 'SpringYardZone.Act2'},
-        {'game': 'SonicTheHedgehog-Genesis', 'state': 'GreenHillZone.Act3'},
-        {'game': 'SonicTheHedgehog-Genesis', 'state': 'GreenHillZone.Act1'},
-        {'game': 'SonicTheHedgehog-Genesis', 'state': 'StarLightZone.Act2'},
-        {'game': 'SonicTheHedgehog-Genesis', 'state': 'StarLightZone.Act1'},
-        {'game': 'SonicTheHedgehog-Genesis', 'state': 'MarbleZone.Act2'},
-        {'game': 'SonicTheHedgehog-Genesis', 'state': 'MarbleZone.Act1'},
-        {'game': 'SonicTheHedgehog-Genesis', 'state': 'MarbleZone.Act3'},
-        {'game': 'SonicTheHedgehog-Genesis', 'state': 'ScrapBrainZone.Act2'},
-        {'game': 'SonicTheHedgehog-Genesis', 'state': 'LabyrinthZone.Act2'},
-        {'game': 'SonicTheHedgehog-Genesis', 'state': 'LabyrinthZone.Act1'},
-        {'game': 'SonicTheHedgehog-Genesis', 'state': 'LabyrinthZone.Act3'}]
-    
-    print(dictionary[environment_index]['game'])
-    print(dictionary[environment_index]['state'])
-    
-    environment = make(game=dictionary[environment_index]['game'], 
-                       state=dictionary[environment_index]['state'],
-                       bk2dir="./records")
+        {"game": "SonicTheHedgehog-Genesis", "state": "SpringYardZone.Act3"},
+        {"game": "SonicTheHedgehog-Genesis", "state": "SpringYardZone.Act2"},
+        {"game": "SonicTheHedgehog-Genesis", "state": "GreenHillZone.Act3"},
+        {"game": "SonicTheHedgehog-Genesis", "state": "GreenHillZone.Act1"},
+        {"game": "SonicTheHedgehog-Genesis", "state": "StarLightZone.Act2"},
+        {"game": "SonicTheHedgehog-Genesis", "state": "StarLightZone.Act1"},
+        {"game": "SonicTheHedgehog-Genesis", "state": "MarbleZone.Act2"},
+        {"game": "SonicTheHedgehog-Genesis", "state": "MarbleZone.Act1"},
+        {"game": "SonicTheHedgehog-Genesis", "state": "MarbleZone.Act3"},
+        {"game": "SonicTheHedgehog-Genesis", "state": "ScrapBrainZone.Act2"},
+        {"game": "SonicTheHedgehog-Genesis", "state": "LabyrinthZone.Act2"},
+        {"game": "SonicTheHedgehog-Genesis", "state": "LabyrinthZone.Act1"},
+        {"game": "SonicTheHedgehog-Genesis", "state": "LabyrinthZone.Act3"},
+    ]
 
-    environment = wrap_environment(environment=environment,
-                                   n_frames=n_frames)
-    
+    print(dictionary[environment_index]["game"])
+    print(dictionary[environment_index]["state"])
+
+    environment = make(
+        game=dictionary[environment_index]["game"],
+        state=dictionary[environment_index]["state"],
+        bk2dir="./records",
+    )
+
+    environment = wrap_environment(environment=environment, n_frames=n_frames)
+
     return environment
 
 
@@ -150,12 +160,10 @@ def make_test(n_frames=4):
     Create an environment with some standard wrappers.
     """
 
-    environment = make_retro(game='SonicTheHedgehog-Genesis', 
-                             state='GreenHillZone.Act2', 
-                             record="./records")
+    environment = make_retro(
+        game="SonicTheHedgehog-Genesis", state="GreenHillZone.Act2", record="./records"
+    )
 
-    environment = wrap_environment(environment=environment,
-                                   n_frames=n_frames)
+    environment = wrap_environment(environment=environment, n_frames=n_frames)
 
     return environment
-

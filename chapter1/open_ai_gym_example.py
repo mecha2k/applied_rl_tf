@@ -1,15 +1,8 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jan 28 23:18:17 2019
-
-@author: tawehbeysolow
-"""
-
 import gym
 
+
 def cartpole():
-    environment = gym.make('CartPole-v1')
+    environment = gym.make("CartPole-v1")
     environment.reset()
     for _ in range(1000):
         environment.render()
@@ -21,7 +14,7 @@ def cartpole():
         print("reward: {}".format(reward))
         print("done: {}".format(done))
         print("info: {}".format(info))
-    
-if __name__ == '__main__':
-    
+
+
+if __name__ == "__main__":
     cartpole()
