@@ -1,7 +1,7 @@
 import gym
 import numpy as np
 import matplotlib.pyplot as plt
-from neural_networks.policy_gradient_utilities import PolicyGradient
+from master.neural_networks.policy_gradient_utilities import PolicyGradient
 
 n_units = 5
 gamma = 0.99

@@ -2,12 +2,12 @@ import gym
 
 
 def cartpole():
-    environment = gym.make("CartPole-v1")
-    environment.reset()
-    for _ in range(1000):
-        environment.render()
-        action = environment.action_space.sample()
-        observation, reward, done, info = environment.step(action)
+    env = gym.make("CartPole-v1")
+    env.reset()
+    for _ in range(10):
+        env.render()
+        action = env.action_space.sample()
+        observation, reward, done, info = env.step(action)
         print("Step {}:".format(_))
         print("action: {}".format(action))
         print("observation: {}".format(observation))

@@ -58,5 +58,6 @@ class PolicyGradient:
 
         policy_model = Model(inputs=[input_layer, advantages], outputs=output_layer)
         policy_model.compile(loss=self.loss_function, optimizer=Adam(self.learning_rate))
+        policy_model.summary()
         model_prediction = Model(input=[input_layer], outputs=output_layer)
         return policy_model, model_prediction
